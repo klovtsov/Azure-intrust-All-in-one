@@ -148,14 +148,10 @@
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "apiVersion": "2018-06-01",
-      "name": "[concat(toLower(parameters('prefix')),variables('vmname')[copyIndex()],'/WorkFlow')]",
+      "name": "[concat(toLower(parameters('prefix')),variables('vmname')[0],'/WorkFlow')]",
       "location": "[parameters('location')]",
-      "copy": {
-        "name": "vmcopy",
-        "count": 1
-      },
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/',toLower(parameters('prefix')),variables('vmname')[copyIndex()])]"
+        "[concat('Microsoft.Compute/virtualMachines/',toLower(parameters('prefix')),variables('vmname')[0])]"
       ],
       "properties": {
         "publisher": "Microsoft.Powershell",
@@ -164,7 +160,7 @@
         "autoUpgradeMinorVersion": true,
         "settings": {
           "modulesUrl": "[Uri(parameters('_artifactsLocation'),concat(variables('dscScript'),parameters('_artifactsLocationSasToken')))]",
-          "configurationFunction": "[concat(variables('vmrole')[copyIndex()],'Configuration.ps1\\Configuration')]",
+          "configurationFunction": "[concat(variables('vmrole')[0],'Configuration.ps1\\Configuration')]",
           "Properties": {
             "DomainName": "[variables('domainName')]",
             "DCName": "[concat(parameters('prefix'),variables('vmname')[0])]",
@@ -214,16 +210,12 @@
     },
     {
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat(toLower(parameters('prefix')),toLower(variables('vmname')[copyIndex()]), '-ni')]",
+      "name": "[concat(toLower(parameters('prefix')),toLower(variables('vmname')[0]), '-ni')]",
       "apiVersion": "2018-08-01",
       "location": "[parameters('location')]",
-      "copy": {
-        "name": "nicopy",
-        "count": 1
-      },
       "dependsOn": [
         "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
-        "[concat('Microsoft.Network/publicIpAddresses/',toLower(parameters('prefix')),toLower(variables('vmname')[copyIndex()]), '-ip')]",
+        "[concat('Microsoft.Network/publicIpAddresses/',toLower(parameters('prefix')),toLower(variables('vmname')[0]), '-ip')]",
         "[concat('Microsoft.Network/networkSecurityGroups/', toLower(toLower(parameters('prefix'))), '-nsg')]"
       ],
       "properties": {
@@ -235,9 +227,9 @@
                 "id": "[variables('networkSettings').subnetRef]"
               },
               "privateIPAllocationMethod": "[variables('networkSettings').privateIPAllocationMethod]",
-              "privateIPAddress": "[concat(variables('networkSettings').virtualMachinesIPAddress,add(copyIndex(),int('4')))]",
+              "privateIPAddress": "[concat(variables('networkSettings').virtualMachinesIPAddress,add(int('0'),int('4')))]",
               "publicIpAddress": {
-                "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', concat(toLower(parameters('prefix')),toLower(variables('vmname')[copyIndex()]), '-ip'))]"
+                "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', concat(toLower(parameters('prefix')),toLower(variables('vmname')[0]), '-ip'))]"
               }
             }
           }
@@ -250,12 +242,8 @@
     {
       "type": "Microsoft.Network/publicIpAddresses",
       "apiVersion": "2018-08-01",
-      "name": "[concat(toLower(parameters('prefix')),toLower(variables('vmname')[copyIndex()]), '-ip')]",
+      "name": "[concat(toLower(parameters('prefix')),toLower(variables('vmname')[0]), '-ip')]",
       "location": "[parameters('location')]",
-      "copy": {
-        "name": "ipcopy",
-        "count": 1
-      },
       "properties": {
         "publicIpAllocationMethod": "[variables('networkSettings').publicIpAllocationMethod]"
       }
