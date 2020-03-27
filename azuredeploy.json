@@ -101,7 +101,7 @@
       "privateIPAllocationMethod": "Static",
       "publicIpAllocationMethod": "Dynamic"
     },
-    "securityGroupRule": {
+    "securityGroupRule": [{
       "name": "default-allow-rdp",
       "priority": 1000,
       "sourceAddressPrefix": "*",
@@ -112,7 +112,7 @@
       "sourcePortRange": "*",
       "destinationAddressPrefix": "*"
     },
-	"securityGroupRule": {
+	 {
       "name": "default-allow-InTrust",
       "priority": 1100,
       "sourceAddressPrefix": "*",
@@ -122,7 +122,7 @@
       "direction": "Inbound",
       "sourcePortRange": "*",
       "destinationAddressPrefix": "*"
-    },
+    }],
     "vmrole": [
       "INTR"
     ],
@@ -162,7 +162,7 @@
           "modulesUrl": "[Uri(parameters('_artifactsLocation'),concat(variables('dscScript'),parameters('_artifactsLocationSasToken')))]",
           "configurationFunction": "[concat(variables('vmrole')[0],'Configuration.ps1\\Configuration')]",
           "Properties": {
-            "DomainName": "[variables('domainName')]",
+            "DomainName": "[concat(parameters('prefix'),variables('vmname')[0])]",
             "DCName": "[concat(parameters('prefix'),variables('vmname')[0])]",
             "INTRName": "[concat(parameters('prefix'),variables('vmname')[0])]",
             "ClientName": "[concat(parameters('prefix'),variables('vmname')[0])]",
