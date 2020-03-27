@@ -302,16 +302,29 @@
       "properties": {
         "securityRules": [
           {
-            "name": "[variables('securityGroupRule').name]",
+            "name": "[variables('securityGroupRule')[0].name]",
             "properties": {
-              "priority": "[variables('securityGroupRule').priority]",
-              "sourceAddressPrefix": "[variables('securityGroupRule').sourceAddressPrefix]",
-              "protocol": "[variables('securityGroupRule').protocol]",
-              "destinationPortRange": "[variables('securityGroupRule').destinationPortRange]",
-              "access": "[variables('securityGroupRule').access]",
-              "direction": "[variables('securityGroupRule').direction]",
-              "sourcePortRange": "[variables('securityGroupRule').sourcePortRange]",
-              "destinationAddressPrefix": "[variables('securityGroupRule').destinationAddressPrefix]"
+              "priority": "[variables('securityGroupRule')[0].priority]",
+              "sourceAddressPrefix": "[variables('securityGroupRule')[0].sourceAddressPrefix]",
+              "protocol": "[variables('securityGroupRule')[0].protocol]",
+              "destinationPortRange": "[variables('securityGroupRule')[0].destinationPortRange]",
+              "access": "[variables('securityGroupRule')[0].access]",
+              "direction": "[variables('securityGroupRule')[0].direction]",
+              "sourcePortRange": "[variables('securityGroupRule')[0].sourcePortRange]",
+              "destinationAddressPrefix": "[variables('securityGroupRule')[0].destinationAddressPrefix]"
+            }
+          },
+		            {
+            "name": "[variables('securityGroupRule')[1].name]",
+            "properties": {
+              "priority": "[variables('securityGroupRule')[1].priority]",
+              "sourceAddressPrefix": "[variables('securityGroupRule')[1].sourceAddressPrefix]",
+              "protocol": "[variables('securityGroupRule')[1].protocol]",
+              "destinationPortRange": "[variables('securityGroupRule')[1].destinationPortRange]",
+              "access": "[variables('securityGroupRule')[1].access]",
+              "direction": "[variables('securityGroupRule')[1].direction]",
+              "sourcePortRange": "[variables('securityGroupRule')[1].sourcePortRange]",
+              "destinationAddressPrefix": "[variables('securityGroupRule')[1].destinationAddressPrefix]"
             }
           }
         ]
