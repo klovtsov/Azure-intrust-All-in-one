@@ -87,20 +87,20 @@
             DependsOn = "[SetCustomPagingFile]PagingSettings"
         }
 		
-#		xCredSSP Server
-#        {
-#            Ensure = "Present"
-#            Role = "Server"
-#            SuppressReboot = $true
-#			DependsOn = "[JoinDomain]JoinDomain"
-#        }
-#        xCredSSP Client
-#        {
-#            Ensure = "Present"
-#            Role = "Client"
-#            DelegateComputers = "*"
-#			DependsOn = "[JoinDomain]JoinDomain"
-#        }
+		xCredSSP Server
+        {
+            Ensure = "Present"
+            Role = "Server"
+            SuppressReboot = $true
+			DependsOn = "[InstallFeatureForSCCM]InstallFeature"
+        }
+        xCredSSP Client
+        {
+            Ensure = "Present"
+            Role = "Client"
+            DelegateComputers = "*"
+			DependsOn = "[xCredSSP]Server"
+        }
 		
 		InstallInTrust InstallInTrustTask
         {
@@ -111,7 +111,7 @@
 			PSName = $PSName
 			ScriptPath = $PSScriptRoot
             Ensure = "Present"
-            DependsOn = "[InstallFeatureForSCCM]InstallFeature"
+            DependsOn = "[xCredSSP]Client"
         }
 
         DownloadAndRunSysmon DwnldSysmon
