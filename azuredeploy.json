@@ -168,9 +168,9 @@
           "Properties": {
             "DomainName": "[variables('domainName')]",
             "DCName": "[concat(parameters('prefix'),variables('vmname')[0])]",
-            "INTRName": "[concat(parameters('prefix'),variables('vmname')[1])]",
-            "ClientName": "[concat(parameters('prefix'),variables('vmname')[2])]",
-            "PSName": "[concat(parameters('prefix'),variables('vmname')[3])]",
+            "INTRName": "[concat(parameters('prefix'),variables('vmname')[0])]",
+            "ClientName": "[concat(parameters('prefix'),variables('vmname')[0])]",
+            "PSName": "[concat(parameters('prefix'),variables('vmname')[0])]",
 			"IntrUrl": "[parameters('IntrPackage')]",
 			"IntrUpdateUrl": "[parameters('IntrUpdate')]",
 			"IntrLicUrl": "[parameters('IntrLic')]",
