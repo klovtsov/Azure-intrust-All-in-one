@@ -73,17 +73,10 @@
             DependsOn = "[SetCustomPagingFile]PagingSettings"
         }
 
-        SetDNS DnsServerAddress
-        {
-            DNSIPAddress = $DNSIPAddress
-            Ensure = "Present"
-            DependsOn = "[DownloadSCCM]DownLoadSCCM"
-        }
-
         InstallFeatureForSCCM InstallFeature
         {
             Name = "INTR"
-            Role = "Distribution Point","Management Point","DC"
+            Role = "Distribution Point","Management Point"
             DependsOn = "[SetCustomPagingFile]PagingSettings"
         }
 		
