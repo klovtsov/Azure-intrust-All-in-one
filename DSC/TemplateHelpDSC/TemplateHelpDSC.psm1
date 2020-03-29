@@ -474,7 +474,7 @@ class InstallInTrust
 			Install-InTrustLicense -LicenseFullName "$cmsourcepath\License.asc"
 			$StatusPath = "$cmsourcepath\Installcmd.txt"
 			    $cmd >> $StatusPath
-			(Get-Content -path "C:\Program Files (x86)\Quest\InTrust\Server\ADC\adctracer.ini" -Raw) -replace '#TaskScheduler=40','TaskScheduler=40' | set-content -path "C:\Program Files (x86)\Quest\InTrust\Server\ADC\adctracer.ini" -Force	
+#			(Get-Content -path "C:\Program Files (x86)\Quest\InTrust\Server\ADC\adctracer.ini" -Raw) -replace '#TaskScheduler=40','TaskScheduler=40' | set-content -path "C:\Program Files (x86)\Quest\InTrust\Server\ADC\adctracer.ini" -Force	
 					$cfgBrowserDll = gci ${env:ProgramFiles(x86)} -Filter Quest.InTrust.ConfigurationBrowser.dll -Recurse -ErrorAction Ignore
 
 					[Reflection.Assembly]::LoadFrom($cfgBrowserDll.FullName) | Out-Null
@@ -482,13 +482,13 @@ class InstallInTrust
 					$cfgBrowser = New-Object Quest.InTrust.ConfigurationBrowser.InTrustConfigurationBrowser($false)
 
 					$cfgBrowser.ConnectLocal()
-					$currentName = "AllDomainAllLogs"
+					$currentName = "AllLogs"
 					$collection = $cfgBrowser.Configuration.Collections.AddCollection([Guid]::NewGuid(),$currentName)
 					$collection.IsEnabled = $true
 					$collection.RepositoryId = $cfgBrowser.Configuration.DataStorages.GetDefaultRepository().Guid
 					$rtcSite = $cfgBrowser.Configuration.Sites.AddRtcSite($currentName)
 					$collection.AddSiteReference($rtcSite.Guid)
-					$rtcSite.AddDomain([Guid]::NewGuid(),$env:USERDNSDOMAIN,$false)
+					$rtcSite.AddComputer([Guid]::NewGuid(),$sqlsrv,$false)
 					$rtcSite.OwnerServerId = $cfgBrowser.GetServer().Guid
 					$rtcSite.Update()
 					$cfgBrowser.Configuration.DataSources.ListDataSources() | ?{$_.ProviderID -eq 'a9e5c7a2-5c01-41b7-9d36-e562dfddefa9' -and $_.Name -notlike "*Change Auditor*" -and $_.Name -notlike "*Active Roles*"} | %{$collection.AddDataSourceReference($_.Guid)}
@@ -524,27 +524,15 @@ class InstallInTrust
 					
 					$site = $cfgBrowser.Configuration.Sites.ListSites() | ? {$_.Name -like "All Windows servers"}
 
-					$site.AddDomain([Guid]::NewGuid(),"contoso.com",$false)
+					$site.AddComputer([Guid]::NewGuid(),$sqlsrv,$false)
 					$site.Update() 
 					$site = $cfgBrowser.Configuration.Sites.ListSites() | ? {$_.Name -like "All workstations"}
 
-					$site.AddDomain([Guid]::NewGuid(),"contoso.com",$false)
+					$site.AddComputer([Guid]::NewGuid(),$sqlsrv,$false)
 					$site.Update() 
 
-					$site = $cfgBrowser.Configuration.Sites.ListSites() | ? {$_.Name -like "Redhat*"}
-
-					$site.AddComputer([Guid]::NewGuid(),"sgazlabcl02.internal.cloudapp.net",$false)
-					$site.Update() 
-					
-                    $task=$cfgBrowser.Configuration.Children["ADCTasks"].Children | ?{$_.Name -like "Redhat Linux Daily*"}
-                    $task.Properties["Enabled"].Value=1
-                    $task.Update()
-                    $adctask=$cfgBrowser.Configuration.Children["ITGCTasks"].Children | ?{$_.Properties["Guid"].Value -eq '{26F70CB0-BD7F-4498-8C1E-AADCEACB15E3}'}
-                    $adctask.Properties["Policy"].Value='{B76D9201-6ECA-451A-9823-404B86EC2780}'
-                    $adctask.Properties["Storages"].Value.Remove($adctask.Properties["Storages"].Value.Item(2),$false)
-                    $adctask.Update()
-
-					$_Policies = $cfgBrowser.Configuration.Children["ITRTPolicies"].Children
+										
+                    $_Policies = $cfgBrowser.Configuration.Children["ITRTPolicies"].Children
 
 					foreach($_Policy in $_Policies)
 					{
@@ -562,15 +550,13 @@ class InstallInTrust
 					}
 					$rulegroup1=$cfgBrowser.Configuration.Children["ITRTProcessingRuleGroups"].Children | ?{$_.Name -like "Windows*"}
 					$rulegroup2=($cfgBrowser.Configuration.Children["ITRTProcessingRuleGroups"].Children | ?{$_.Name -like "Advanced*"}).Children | ?{$_.Name -like "Windows*"}
-                    $rulegroup3=$cfgBrowser.Configuration.Children["ITRTProcessingRuleGroups"].Children | ?{$_.Name -like "Redhat*"}					
-   					$rulegroup4=($cfgBrowser.Configuration.Children["ITRTProcessingRuleGroups"].Children | ?{$_.Name -like "Advanced*"}).Children | ?{$_.Name -like "Linux*"}
+
                     Add-SiteToPolicy -SiteName "All workstations" -PolicyName "Windows/AD Security: full"
 					Enable-Policy -PolicyName "Windows/AD Security: full" -Yes
-                    Enable-Policy -PolicyName "Redhat Linux: security" -Yes
+
 					List-Rules -Group $rulegroup1 | %{Enable-Rule -RuleName $_.Name -Yes -NoEventsSQL}
 					List-Rules -Group $rulegroup2 | %{Enable-Rule -RuleName $_.Name -Yes -NoEventsSQL}
-                    List-Rules -Group $rulegroup3 | %{Enable-Rule -RuleName $_.Name -Yes -NoEventsSQL}
-                    List-Rules -Group $rulegroup4 | %{Enable-Rule -RuleName $_.Name -Yes -NoEventsSQL}
+
 		} -ArgumentList $instpsmpath,$instparpsmpath,$admpass,$sqlsrv,$creds,$cmsourcepath,$_SP -Verbose
         Write-output $output
 
