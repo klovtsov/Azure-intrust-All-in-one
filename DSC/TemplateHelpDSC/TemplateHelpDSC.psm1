@@ -434,7 +434,8 @@ class InstallInTrust
         $cmpath = "c:\$_CM.exe"
         $cmsourcepath = "c:\$_CM"
 		$creds=$usernm
-
+		set-item wsman:\localhost\Client\TrustedHosts -value localhost
+		set-item wsman:\localhost\Client\TrustedHosts -value $PSName
 		$output = Invoke-Command -ScriptBlock { 
 			param($instpsmpath,$instparpsmpath,$admpass,$sqlsrv,$creds,$cmsourcepath,$_SP)
 			$StatusPath = "$cmsourcepath\Installcmd.txt"
@@ -572,7 +573,8 @@ class InstallInTrust
 		} -ArgumentList $instpsmpath,$instparpsmpath,$admpass,$sqlsrv,$creds,$cmsourcepath,$_SP -ComputerName localhost -authentication credssp -Credential $PScreds -ConfigurationName microsoft.powershell32 -Verbose
         Write-output $output
 
-		
+		$StatusPath = "$cmsourcepath\Installcmd.txt"
+		$output >> $StatusPath
 		
     }
 
