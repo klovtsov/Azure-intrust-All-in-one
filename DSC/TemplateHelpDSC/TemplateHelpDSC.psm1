@@ -435,8 +435,9 @@ class InstallInTrust
         $cmsourcepath = "c:\$_CM"
 		$creds=$usernm
 		set-item wsman:\localhost\Client\TrustedHosts -value localhost
-		set-item wsman:\localhost\Client\TrustedHosts -value $sqlsrv
-		$output = Invoke-Command -ScriptBlock { 
+		#set-item wsman:\localhost\Client\TrustedHosts -value $sqlsrv
+		$session=New-PSSession -ComputerName localhost -Credential $PSCreds -ConfigurationName microsoft.powershell32
+		$output = Invoke-Command -Session $session -ScriptBlock { 
 			param($instpsmpath,$instparpsmpath,$admpass,$sqlsrv,$creds,$cmsourcepath,$_SP)
 			$StatusPath = "$cmsourcepath\Installcmd.txt"
             "Started..." >> $StatusPath
@@ -570,7 +571,7 @@ class InstallInTrust
 					List-Rules -Group $rulegroup2 | %{Enable-Rule -RuleName $_.Name -Yes -NoEventsSQL}
                     List-Rules -Group $rulegroup3 | %{Enable-Rule -RuleName $_.Name -Yes -NoEventsSQL}
                     List-Rules -Group $rulegroup4 | %{Enable-Rule -RuleName $_.Name -Yes -NoEventsSQL}
-		} -ArgumentList $instpsmpath,$instparpsmpath,$admpass,$sqlsrv,$creds,$cmsourcepath,$_SP -ComputerName localhost -authentication credssp -Credential $PScreds -ConfigurationName microsoft.powershell32 -Verbose
+		} -ArgumentList $instpsmpath,$instparpsmpath,$admpass,$sqlsrv,$creds,$cmsourcepath,$_SP -Verbose
         Write-output $output
 
 		$StatusPath = "$cmsourcepath\Installcmd.txt"
