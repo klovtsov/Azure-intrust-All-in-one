@@ -435,7 +435,7 @@ class InstallInTrust
         $cmsourcepath = "c:\$_CM"
 		$creds=$usernm
 		set-item wsman:\localhost\Client\TrustedHosts -value localhost
-		set-item wsman:\localhost\Client\TrustedHosts -value $PSName
+		set-item wsman:\localhost\Client\TrustedHosts -value $sqlsrv
 		$output = Invoke-Command -ScriptBlock { 
 			param($instpsmpath,$instparpsmpath,$admpass,$sqlsrv,$creds,$cmsourcepath,$_SP)
 			$StatusPath = "$cmsourcepath\Installcmd.txt"
