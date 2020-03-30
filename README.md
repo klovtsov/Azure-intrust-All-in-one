@@ -25,6 +25,7 @@ DSC\INTRConfiguration.ps1 - DSC configuration for the server (INTR prefix becaus
 DSC\NotifyThroughEventLog.exe - batch enable event logging for alert rules
 DSC\SetInstallationParameters.psm1 - InTrust AT scripts
 DSC\Utility.psm1 - InTrust AT scripts
+
 SQLServerDSC - module for SQL server DSC configuration (used only for SRS, because base image for the VM already contains SQL)
 TemplateHelpDSC - set of helper scripts including main classes for installation and downloading for InTrust deployment
 xCredSSP - CredSPP configuration for Invoke-Command from Local System to template admin user
