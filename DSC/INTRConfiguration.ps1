@@ -32,6 +32,7 @@
 
     Import-DscResource -ModuleName TemplateHelpDSC
 	Import-DscResource -ModuleName xCredSSP
+	Import-DscResource -ModuleName SqlServerDsc
 	#Import-DscResource -ModuleName IntrHelpers
 	
     $LogFolder = "TempLog"
@@ -95,6 +96,18 @@
 			DependsOn = "[xCredSSP]Server"
         }
 		
+		SqlRSSetup InstallDefaultInstance
+        {
+            InstanceName         = 'SSRS'
+            IAcceptLicenseTerms   = 'Yes'
+            SourcePath           = 'C:\InstallMedia\SQLServerReportingServices.exe'
+            Edition              = 'Development'
+
+            PsDscRunAsCredential = $DomainCreds
+			
+			DependsOn = "[xCredSSP]Client"
+        }
+		
 		InstallInTrust InstallInTrustTask
         {
             CM = $CM
@@ -104,14 +117,21 @@
 			PSName = $PSName
 			ScriptPath = $PSScriptRoot
             Ensure = "Present"
-            DependsOn = "[xCredSSP]Client"
+            DependsOn = "[SqlRSSetup]InstallDefaultInstance"
+        }
+		
+		DownloadAndRunETW DwnldETW
+        {
+            CM = "CM"
+            Ensure = "Present"
+            DependsOn = "[InstallInTrust]InstallInTrustTask"
         }
 
         DownloadAndRunSysmon DwnldSysmon
         {
             CM = "CM"
             Ensure = "Present"
-            DependsOn = "[InstallInTrust]InstallInTrustTask"
+            DependsOn = "[DownloadAndRunETW]DwnldETW"
         }
 
     }
