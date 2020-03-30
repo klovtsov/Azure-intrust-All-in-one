@@ -952,7 +952,7 @@ class DownloadSCCM
 		$cmlicpath = "$cmsourcepath\License.asc"
 		Invoke-WebRequest -Uri $cmlicurl -OutFile $cmlicpath
 		$cmsrspath = "C:\SQLServerReportingServices.exe"
-		Invoke-WebRequest -Uri "https://www.microsoft.com/en-us/download/confirmation.aspx?id=100122" -OutFile $cmsrspath
+		Invoke-WebRequest -Uri "https://download.microsoft.com/download/1/a/a/1aaa9177-3578-4931-b8f3-373b24f63342/SQLServerReportingServices.exe" -OutFile $cmsrspath
     }
 
     [bool] Test()
