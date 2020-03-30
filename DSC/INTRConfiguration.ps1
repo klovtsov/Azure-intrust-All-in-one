@@ -100,7 +100,7 @@
         {
             InstanceName         = 'SSRS'
             IAcceptLicenseTerms   = 'Yes'
-            SourcePath           = 'C:\InstallMedia\SQLServerReportingServices.exe'
+            SourcePath           = 'C:\SQLServerReportingServices.exe'
             Edition              = 'Development'
 
             PsDscRunAsCredential = $DomainCreds
