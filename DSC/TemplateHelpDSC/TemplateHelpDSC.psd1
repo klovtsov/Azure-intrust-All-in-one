@@ -38,7 +38,8 @@ DscResourcesToExport = @(
     'SetupDomain',
     'FileReadAccessShare',
     'InstallCA',
-	'InstallGPO'
+	'InstallGPO',
+	'InstallSMTPRelay'
 )
 
 # Version number of this module.
