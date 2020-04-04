@@ -2605,7 +2605,7 @@ class InstallSMTPRelay
 		$_SmartHostPassword = $this.SmartHostPassword
 		Write-Verbose "Configuring SMTP Relay..." 
 		Import-Module ServerManager
-		Add-WindowsFeature SMTP-Server #,Web-Mgmt-Console,WEB-WMI
+		Add-WindowsFeature SMTP-Server,Web-Mgmt-Console,WEB-WMI
 
 		Set-Service "SMTPSVC" -StartupType Automatic -ErrorAction SilentlyContinue
 		Start-Service "SMTPSVC" -ErrorAction SilentlyContinue
