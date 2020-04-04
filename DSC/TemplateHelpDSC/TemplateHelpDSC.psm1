@@ -2579,3 +2579,96 @@ class InstallCA
     }
     
 }
+
+[DscResource()]
+class InstallSMTPRelay
+{
+    [DscProperty(Key)]
+    [string] $SmartHostAddress
+
+    [DscProperty(Key)]
+    [string] $SmartHostPort
+
+    [DscProperty(Key)]
+    [string] $SmartHostUserName
+
+    [DscProperty(Key)]
+    [string] $SmartHostPassword
+
+    [void] Set()
+    {
+        try
+        {
+		$_SmartHostAddress = $this.SmartHostAddress
+		$_SmartHostPort = $this.SmartHostPort
+		$_SmartHostUserName = $this.SmartHostUserName
+		$_SmartHostPassword = $this.SmartHostPassword
+		Write-Verbose "Configuring SMTP Relay..." 
+		Import-Module ServerManager
+		Add-WindowsFeature SMTP-Server #,Web-Mgmt-Console,WEB-WMI
+
+		Set-Service "SMTPSVC" -StartupType Automatic -ErrorAction SilentlyContinue
+		Start-Service "SMTPSVC" -ErrorAction SilentlyContinue
+
+		$SmtpConfig = Get-WMIObject -Namespace root/MicrosoftIISv2 -ComputerName localhost -Query "Select * From IisSmtpServerSetting"
+
+		$RelayIpList = @( 24,0,0,128,32,0,0,128,60,0,0,128,68,0,0,128,1,0,0,0,76,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,2,0,0,0,1,0,0,0,4,0,0,0,0,0,0,0,76,0,0,128,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,255,255,255,255 )
+
+		$Networkip =@()
+		$Networks = Get-WmiObject Win32_NetworkAdapterConfiguration -ComputerName    localhost | ? {$_.IPEnabled}
+		foreach($Network in $Networks)  {  $Networkip = $Network.IpAddress[0]  }
+		$ipList = @()
+		$octet = @()
+		$ipList = "127.0.0.1"
+		$octet += $ipList.Split(".")
+		$octet += $Networkip.Split(".")
+		$RelayIpList += $octet
+
+		#$RelayIpList[36] +=2 
+		#$RelayIpList[44] +=2
+
+		$SmtpConfig.MaxMessageSize = "10485760"                                                  
+		$SmtpConfig.MaxSessionSize = "52428800"                                                   
+		$SmtpConfig.RelayForAuth = "-1"                                                          
+		$SmtpConfig.RelayIpList = $RelayIpList
+		$SmtpConfig.RemoteSmtpPort = $_SmartHostPort                                                         
+		$SmtpConfig.RouteAction = "264"                                                         
+		$SmtpConfig.RoutePassword = $_SmartHostPassword                                                    
+		$SmtpConfig.RouteUserName = $_SmartHostUserName
+		$SmtpConfig.SmartHost = $_SmartHostAddress           
+		$SmtpConfig.SmartHostType = "2"                                                     
+
+		$SmtpConfig.Put()
+
+		New-NetFirewallRule -DisplayName 'SMTP Relay Outbound' -Profile Private,Domain -Direction Outbound -Action Allow -Protocol TCP -LocalPort $_SmartHostPort
+
+		Restart-Service "SMTPSVC" -ErrorAction SilentlyContinue
+
+		$StatusPath = "$env:windir\temp\InstallSMTPRelayStatus.txt"
+		"Finished" >> $StatusPath
+
+		Write-Verbose "Finished installing SMTP relay."
+        }
+        catch
+        {
+            Write-Verbose "Failed to configure SMTP relay."
+        }
+    }
+
+    [bool] Test()
+    {
+		$StatusPath = "$env:windir\temp\InstallSMTPRelayStatus.txt"
+		if(Test-Path $StatusPath)
+		{
+		return $true
+		}
+
+        return $false
+    }
+
+    [InstallSMTPRelay] Get()
+    {
+        return $this
+    }
+    
+}

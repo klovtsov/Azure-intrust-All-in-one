@@ -63,6 +63,14 @@
             MaximumSize = '8192'
         }
 
+	InstallSMTPRelay InstallSMTPRelay
+	{
+		$SmartHostAddress = "smtp.sendgrid.net"
+		$SmartHostPort = "587"
+		$SmartHostUserName = "azure_d789e3304b03060623f025911bd0f272@azure.com" 
+		$SmartHostPassword = "frujiE15"
+	} 
+
         DownloadSCCM DownLoadSCCM
         {
             CM = $CM
