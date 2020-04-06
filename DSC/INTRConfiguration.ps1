@@ -27,7 +27,16 @@
         [Parameter(Mandatory)]
         [String]$DNSIPAddress,
         [Parameter(Mandatory)]
-        [System.Management.Automation.PSCredential]$Admincreds
+        [System.Management.Automation.PSCredential]$Admincreds,
+		[Parameter(Mandatory)]
+		[String]$SMTPSmartHostAddress,
+		[Parameter(Mandatory)]
+		[String]$SMTPSmartHostPort,
+		[Parameter(Mandatory)]
+		[String]$SMTPSmartHostUserName,
+		[Parameter(Mandatory)]
+		[String]$SMTPSmartHostPassword
+
     )
 
     Import-DscResource -ModuleName TemplateHelpDSC
@@ -65,10 +74,10 @@
 
 	InstallSMTPRelay InstallSMTPRelay
 	{
-		SmartHostAddress = "smtp.sendgrid.net"
-		SmartHostPort = "587"
-		SmartHostUserName = "azure_d789e3304b03060623f025911bd0f272@azure.com" 
-		SmartHostPassword = "frujiE15"
+		SmartHostAddress = $SMTPSmartHostAddress
+		SmartHostPort = $SMTPSmartHostPort
+		SmartHostUserName = $SMTPSmartHostUserName 
+		SmartHostPassword = $SMTPSmartHostPassword
 	} 
 
         DownloadSCCM DownLoadSCCM
