@@ -2632,7 +2632,7 @@ class InstallSMTPRelay
 		$SmtpConfig.RelayForAuth = "-1"                                                          
 		$SmtpConfig.RelayIpList = $RelayIpList
 		$SmtpConfig.RemoteSmtpPort = $_SmartHostPort                                                         
-		$SmtpConfig.RouteAction = "264"                                                         
+		$SmtpConfig.RouteAction = "268"                                                         
 		$SmtpConfig.RoutePassword = $_SmartHostPassword                                                    
 		$SmtpConfig.RouteUserName = $_SmartHostUserName
 		$SmtpConfig.SmartHost = $_SmartHostAddress           
